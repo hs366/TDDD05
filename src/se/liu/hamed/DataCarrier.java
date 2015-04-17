@@ -2,14 +2,23 @@ package se.liu.hamed;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class DataCarrier {
+import se.liu.hamed.exceptions.InvalidStateException;
 
-	public DataCarrier(int p0, int p1, int p2, int p3, int p4, String sV) {
+public class DataCarrier {
+        /*
+         * using throws to passing any exception to other classes ()
+         */
+	public DataCarrier(int p0, int p1, int p2, int p3, int p4, String sV) 
+			throws InvalidStateException {
 		stateParams = new int[5];
 		stateValues = new String[32];
 
 		setState(p0, p1, p2, p3, p4);
+		/*
+                 * The value for the detected invalid state will remain as null.
+                 */
 		setValue(sV);
+
 	}
 
 	private int[] stateParams;
@@ -166,21 +175,27 @@ public class DataCarrier {
 
 	public String getValue() {
 		/* Your code here */
-
-		// decide the methods name based on the state
+		
+		/*
+		 * decide the methods name based on the state.
+		 */
 		int x = 0;
-		// calculate the decimal value of the state
+		/*
+		 * calculate the decimal value of the state.
+		 */
 		for (int i = 0; i < stateParams.length; ++i) {
 
 			if (stateParams[i] > 1 || stateParams[i] < 0) {
 				return null;
-				// throw (new Exception("Invalid State"));
-
 			}
-			// Its also possible to use Integer.parseInt("", i) method.
+			/*
+			 * Its also possible to use Integer.parseInt("", i) method.
+			 */
 			x += stateParams[i] * Math.pow(2, i);
 		}
-
+                /*
+                 * Get an array of all the methods that declared.
+                 */
 		try {
 			java.lang.reflect.Method[] methods = this.getClass()
 					.getDeclaredMethods();
@@ -364,18 +379,33 @@ public class DataCarrier {
 		setP4(p4);
 	}
 
-	public void setValue(String sV) {
+        /*
+         * According to requirements (5), only An invalid state has a null value
+         * associated with it. I'm using only custom exception for setValue().
+         */
+	public void setValue(String sV) throws InvalidStateException {
 		/* Your code here */
 		try {
 			int x = 0;
-			// calculate the decimal value of the state
+			/*
+			 * calculate the decimal value of the state.
+			 */
 			for (int i = 0; i < stateParams.length; ++i) {
 				if (stateParams[i] > 1 || stateParams[i] < 0) {
-					throw (new Exception("Invalid State"));
+                                        /*
+                                         * The execution will interrupt at this stage and the
+                                         * problem is referred to the calling method.
+                                         */
+					throw new InvalidStateException("Invalid State Specified");
 				}
-				// Its also possible to use Integer.parseInt("", i) method.
+				/*
+				 * Its also possible to use Integer.parseInt("", i) method.
+				 */
 				x += stateParams[i] * Math.pow(2, i);
 			}
+                        /*
+                         * Get an array of all the methods that declared.
+                         */
 			java.lang.reflect.Method[] methods = this.getClass()
 					.getDeclaredMethods();
 
